@@ -1,0 +1,2 @@
+Esse reposítório é um clone de um outro realizado em PI, que realizada a análise e exibição de dados sobre multa de trânsitos.
+Podemos usar como referência para o tema do TCC.
