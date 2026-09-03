@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Observatório Brasileiro da Inadimplência{% endblock %}</title>
+    <meta name="description" content="Plataforma acadêmica para análise de indicadores socioeconômicos e de inadimplência." />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="{% url 'home' %}" class="brand">Observatório Brasileiro da Inadimplência</a>
+        <nav aria-label="Menu principal" class="main-nav">
+          <a href="{% url 'home' %}" class="{% if pagina == 'início' %}active{% endif %}">Início</a>
+          <a href="{% url 'dashboard' %}" class="{% if pagina == 'dashboard' %}active{% endif %}">Dashboard</a>
+          <a href="{% url 'indicadores' %}" class="{% if pagina == 'indicadores' %}active{% endif %}">Indicadores</a>
+          <a href="{% url 'fontes' %}" class="{% if pagina == 'fontes' %}active{% endif %}">Fontes de Dados</a>
+          <a href="{% url 'sobre' %}" class="{% if pagina == 'sobre' %}active{% endif %}">Sobre</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>Observatório Brasileiro da Inadimplência</p>
+        <p>DADOS SIMULADOS PARA DESENVOLVIMENTO.</p>
+      </div>
+    </footer>
+  </body>
+</html>

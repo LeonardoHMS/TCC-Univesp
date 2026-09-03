@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Fontes de Dados | Observatório Brasileiro da Inadimplência{% endblock %}
+
+{% block content %}
+<section class="container section-block">
+  <p class="eyebrow">Transparência</p>
+  <h1>Fontes de Dados</h1>
+  <div class="card-grid">
+    {% for fonte in fontes %}
+      <article class="info-card">
+        <p class="card-label">{{ fonte.tipo_origem }}</p>
+        <h2>{{ fonte.instituicao }}</h2>
+        <p>{{ fonte.descricao|default:'Sem descrição disponível.' }}</p>
+        <ul class="meta-list">
+          <li>Origem: {{ fonte.nome }}</li>
+          <li>Endereço oficial: <a href="{{ fonte.url_origem }}" target="_blank" rel="noreferrer">{{ fonte.url_origem|default:'Não informado' }}</a></li>
+          <li>Última atualização: {{ fonte.data_atualizacao|default:'Não disponível' }}</li>
+        </ul>
+      </article>
+    {% empty %}
+      <p>Nenhuma fonte cadastrada.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

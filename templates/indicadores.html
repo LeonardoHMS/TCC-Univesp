@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Indicadores | Observatório Brasileiro da Inadimplência{% endblock %}
+
+{% block content %}
+<section class="container section-block">
+  <p class="eyebrow">Catálogo</p>
+  <h1>Indicadores</h1>
+  <div class="card-grid">
+    {% for indicador in indicadores %}
+      <article class="info-card">
+        <p class="card-label">{{ indicador.categoria }}</p>
+        <h2>{{ indicador.nome }}</h2>
+        <p>{{ indicador.descricao|default:'Sem descrição disponível.' }}</p>
+        <ul class="meta-list">
+          <li>Unidade: {{ indicador.unidade_medida }}</li>
+          <li>Periodicidade: {{ indicador.periodicidade|default:'não informada' }}</li>
+        </ul>
+      </article>
+    {% empty %}
+      <p>Nenhum indicador cadastrado.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

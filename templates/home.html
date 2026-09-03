@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Início | Observatório Brasileiro da Inadimplência{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <p class="eyebrow">Projeto acadêmico</p>
+      <h1>Observatório Brasileiro da Inadimplência</h1>
+      <p class="lead">
+        Plataforma para análise exploratória de indicadores socioeconômicos e de inadimplência, com foco em tendências,
+        comparação e rastreabilidade dos dados.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="{% url 'dashboard' %}">Acessar dashboard</a>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <h2>Resumo</h2>
+      {% if ultimo_valor %}
+        <p class="metric-label">Último dado disponível</p>
+        <p class="metric-value">{{ ultimo_valor.valor }} {{ ultimo_valor.indicador.unidade_medida }}</p>
+        <p>{{ ultimo_valor.indicador.nome }} · {{ ultimo_valor.localidade.nome }} · {{ ultimo_valor.periodo }}</p>
+      {% else %}
+        <p>Sem dados disponíveis no momento.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="container section-block">
+  <h2>Principais indicadores</h2>
+  <div class="card-grid">
+    {% for indicador in indicadores %}
+      <article class="info-card">
+        <p class="card-label">{{ indicador.categoria }}</p>
+        <h3>{{ indicador.nome }}</h3>
+        <p>{{ indicador.descricao|truncatewords:18 }}</p>
+        <span>{{ indicador.unidade_medida }}</span>
+      </article>
+    {% empty %}
+      <p>Nenhum indicador cadastrado no momento.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
