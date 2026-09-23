@@ -1,0 +1,30 @@
+{
+    "Estados": {
+        "Tocantins": 26771,
+        "Sergipe": 26769,
+        "Roraima": 26766,
+        "Rondônia": 26765,
+        "Paraná": 26762,
+        "Piauí": 26761,
+        "Pernambuco": 26760,
+        "Paraíba": 26759,
+        "Pará": 26758,
+        "Maranhão": 26754,
+        "Goiás": 26753,
+        "Ceará": 26750,
+        "Bahia": 26749,
+        "Amapá": 26748,
+        "Amazonas": 26747,
+        "Alagoas": 26746,
+        "Acre": 26745,
+        "São Paulo": 26770,
+        "Santa Catarina": 26768,
+        "Mato Grosso": 26757,
+        "Minas Gerais": 26755,
+        "Espírito Santo": 26752,
+        "Distrito Federal": 26751,
+        "Rio de Janeiro": 26763,
+        "Mato Grosso do Sul": 26756,
+        "Rio Grande do Norte": 26764
+    }
+}

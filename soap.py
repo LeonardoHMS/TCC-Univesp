@@ -1,7 +1,7 @@
 import requests
 import json
 
-# Inadimplência da carteira de crédito - Total
+# Inadimplência - Total
 def get_data_totals(serial_code: str, format_data: str, initial_date: str, end_date: str, file_name: str):
     URL_API_TOTALS = "https://api.bcb.gov.br/dados/serie/bcdata.sgs"
     url_api_totals_finish = f'{URL_API_TOTALS}.{serial_code}/dados?formato={format_data}&dataInicial={initial_date}&dataFinal={end_date}'
