@@ -29,3 +29,20 @@ class ImportacaoDados(models.Model):
 
     def __str__(self):
         return f'Importação #{self.pk} - {self.status}'
+
+
+class ErroImportacao(models.Model):
+    importacao = models.ForeignKey(ImportacaoDados, on_delete=models.CASCADE, related_name='erros')
+    linha = models.PositiveIntegerField(default=0)
+    campo = models.CharField(max_length=100, blank=True)
+    valor_original = models.TextField(blank=True)
+    motivo = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['linha', 'created_at']
+        verbose_name = 'Erro de importação'
+        verbose_name_plural = 'Erros de importação'
+
+    def __str__(self):
+        return f'{self.importacao_id} - linha {self.linha}: {self.motivo}'
