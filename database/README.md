@@ -1,6 +1,6 @@
 # OBI — Banco de Dados
 
-Banco de dados PostgreSQL desenvolvido para o projeto TCC OBEI — Observatório Brasileiro da Inadimplência.
+Banco de dados PostgreSQL desenvolvido para o projeto TCC OBI — Observatório Brasileiro da Inadimplência.
 
 ## Informações gerais
 
