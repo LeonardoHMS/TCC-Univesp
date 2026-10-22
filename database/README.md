@@ -18,6 +18,6 @@ O banco utiliza tabelas relacionais para organizar fontes, indicadores, localida
 
 ## Integração
 
-O banco será utilizado pelo backend Django para disponibilizar os indicadores e suas séries históricas ao frontend do OBEI.
+O banco será utilizado pelo backend Django para disponibilizar os indicadores e suas séries históricas ao frontend do OBI.
 
 A documentação técnica e as instruções de restauração serão acrescentadas nesta pasta.
