@@ -35,12 +35,12 @@
 
       <label>
         Período inicial
-        <input type="date" name="periodo_inicial" value="{{ periodo_inicial }}">
+        <input type="date" name="periodo_inicial" value="{{ periodo_inicial|default:'' }}">
       </label>
 
       <label>
         Período final
-        <input type="date" name="periodo_final" value="{{ periodo_final }}">
+        <input type="date" name="periodo_final" value="{{ periodo_final|default:'' }}">
       </label>
 
       <label>
@@ -100,7 +100,17 @@
   </div>
 
   <div class="chart-card">
-    <canvas id="lineChart" aria-label="Gráfico de linha"></canvas>
+    {% if chart_data.labels %}
+      <canvas id="lineChart" aria-label="Gráfico de linha"></canvas>
+    {% else %}
+      <div class="chart-empty">
+        <strong>Selecione um indicador para visualizar a evolução.</strong>
+        <p>
+          O filtro “Todos” mantém os dados na tabela, mas não mistura indicadores
+          com unidades de medida diferentes no mesmo gráfico.
+        </p>
+      </div>
+    {% endif %}
   </div>
 
   <div class="table-card">
@@ -132,24 +142,14 @@
   </div>
 </section>
 
+{{ chart_data|json_script:"chart-data" }}
+{% if chart_data.labels %}
 <script>
-  const labels = [{% for item in tabela %}'{{ item.periodo }}',{% empty %}'Sem dados'{% endfor %}];
-  const values = [{% for item in tabela %}{{ item.valor }},{% empty %}0{% endfor %}];
+  const chartData = JSON.parse(document.getElementById('chart-data').textContent);
 
   new Chart(document.getElementById('lineChart'), {
     type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Evolução do indicador',
-        data: values,
-        borderColor: '#1f5ea8',
-        backgroundColor: 'rgba(31,94,168,0.12)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.25
-      }]
-    },
+    data: chartData,
     options: {
       responsive: true,
       plugins: {
@@ -163,4 +163,5 @@
     }
   });
 </script>
+{% endif %}
 {% endblock %}

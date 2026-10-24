@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.shortcuts import render
 
 from fontes.models import FonteDados
@@ -40,7 +39,6 @@ def dashboard(request):
     regiao = request.GET.get('regiao')
     estado = request.GET.get('estado')
     fonte = request.GET.get('fonte')
-
     if selected_indicator:
         queryset = queryset.filter(indicador_id=selected_indicator)
     if selected_category:
@@ -60,7 +58,7 @@ def dashboard(request):
     if fonte:
         selected_fonte_label = FonteDados.objects.filter(pk=fonte).values_list('instituicao', flat=True).first()
 
-    tabela = queryset.order_by('-periodo__data_referencia', 'localidade__nome')[:40]
+    tabela = list(queryset.order_by('-periodo__data_referencia', 'localidade__nome')[:40])
 
     if selected_indicator:
         dados = queryset.order_by('periodo__data_referencia')
@@ -73,6 +71,34 @@ def dashboard(request):
     else:
         valor_mais_recente = None
         variacao = None
+
+    chart_data = {'labels': [], 'datasets': []}
+    if selected_indicator:
+        chart_labels = []
+        chart_label_by_date = {}
+        chart_series = {}
+        for item in queryset.order_by('periodo__data_referencia', 'localidade__nome'):
+            date_key = item.periodo.data_referencia.isoformat()
+            if date_key not in chart_label_by_date:
+                chart_label_by_date[date_key] = item.periodo.data_referencia.strftime('%m/%Y')
+                chart_labels.append(date_key)
+
+            locality = item.localidade.nome
+            chart_series.setdefault(locality, {})[date_key] = float(item.valor)
+
+        chart_data = {
+            'labels': [chart_label_by_date[date_key] for date_key in chart_labels],
+            'datasets': [
+                {
+                    'label': locality,
+                    'data': [values.get(date_key) for date_key in chart_labels],
+                    'borderWidth': 2,
+                    'tension': 0.25,
+                    'fill': False,
+                }
+                for locality, values in chart_series.items()
+            ],
+        }
 
     linha = []
     for item in tabela:
@@ -104,6 +130,7 @@ def dashboard(request):
             'selected_estado': estado,
             'selected_fonte': fonte,
             'selected_fonte_label': selected_fonte_label,
+            'chart_data': chart_data,
             'regiao': regiao,
             'estado': estado,
             'fonte': fonte,

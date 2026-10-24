@@ -30,6 +30,46 @@ class DashboardViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Observatório Brasileiro da Inadimplência')
 
+    def test_dashboard_uses_database_data_for_chart(self):
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['selected_indicator'])
+        self.assertEqual(response.context['chart_data'], {'labels': [], 'datasets': []})
+        self.assertContains(response, 'Selecione um indicador para visualizar a evolução.')
+
+    def test_dashboard_region_filter_works_without_indicator_filter(self):
+        response = self.client.get(reverse('dashboard'), {'regiao': 'Sudeste'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['selected_indicator'])
+        self.assertEqual(len(response.context['tabela']), 1)
+        self.assertContains(response, 'São Paulo')
+
+    def test_dashboard_state_filter_works_without_indicator_filter(self):
+        response = self.client.get(reverse('dashboard'), {'estado': str(Localidade.objects.first().id)})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['selected_indicator'])
+        self.assertEqual(len(response.context['tabela']), 1)
+
+    def test_dashboard_category_filter_is_not_limited_by_default_indicator(self):
+        renda = Indicador.objects.create(
+            nome='Renda média',
+            categoria='renda',
+            unidade_medida='R$',
+            periodicidade='mensal',
+        )
+        ValorIndicador.objects.create(
+            indicador=renda,
+            fonte=FonteDados.objects.first(),
+            localidade=Localidade.objects.first(),
+            periodo=Periodo.objects.first(),
+            valor='3000',
+        )
+        response = self.client.get(reverse('dashboard'), {'categoria': 'renda'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.context['selected_indicator'])
+        self.assertFalse(response.context['chart_data']['datasets'])
+        self.assertContains(response, 'Renda média')
+
     def test_seed_demo_data_command(self):
         call_command('seed_demo_data')
         self.assertTrue(Indicador.objects.exists())

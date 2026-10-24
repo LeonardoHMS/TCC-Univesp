@@ -280,6 +280,24 @@ input {
   margin-top: 1.5rem;
 }
 
+.chart-empty {
+  min-height: 180px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem;
+}
+
+.chart-empty strong {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.chart-empty p {
+  margin: 0.5rem 0 0;
+}
+
 .table-card {
   margin-top: 1.5rem;
   padding: 1rem;

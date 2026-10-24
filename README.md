@@ -31,8 +31,9 @@ A estrutura modular foi organizada para separar responsabilidades por domínio:
 ## Requisitos
 
 - Python 3.12+
-- PostgreSQL 16 (opcional para execução local via Docker)
-- Virtualenv ou venv
+- PostgreSQL 16 ou superior
+- Docker Desktop (alternativa para executar o PostgreSQL)
+- Virtualenv ou venv, caso execute o Django fora do Docker
 
 ## Instalação local
 
@@ -60,19 +61,63 @@ A estrutura modular foi organizada para separar responsabilidades por domínio:
 
 ## Configuração do PostgreSQL
 
-A configuração padrão do projeto usa PostgreSQL via `DATABASE_URL`. Exemplo:
+A aplicação usa exclusivamente PostgreSQL por meio da variável `DATABASE_URL`.
+SQLite não é suportado. Exemplo para um PostgreSQL instalado localmente:
 
 ```env
 DATABASE_URL=postgresql://observatorio:observatorio@localhost:5432/observatorio
 ```
 
-Se preferir, é possível subir o banco com Docker Compose:
+Se você já possui PostgreSQL instalado no Windows, crie o banco `observatorio`,
+ajuste as credenciais no `.env` e mantenha o `DATABASE_URL` apontando para
+`localhost`.
+
+## Execução com Docker
+
+Com o Docker Desktop instalado e aberto, execute:
 
 ```bash
-docker compose up -d db
+docker compose up --build
 ```
 
-## Migrations
+O Compose inicia o PostgreSQL, aguarda o banco ficar saudável, executa as
+migrations e disponibiliza a aplicação em http://127.0.0.1:8000/. Para parar
+os serviços:
+
+```bash
+docker compose down
+```
+
+### Importação do backup OBI
+
+O backup em `database/` usa um esquema legado separado do schema Django. Depois
+de restaurá-lo no banco `tcc2026`, importe os registros para as tabelas usadas
+pelo frontend. No Windows PowerShell, com os serviços em execução, use:
+
+```powershell
+docker compose exec db createdb -U observatorio tcc2026
+docker run --rm --network tcc_default `
+  -v "${PWD}\database:/backup" `
+  -e PGPASSWORD=observatorio `
+  postgres:18-alpine `
+  pg_restore -h db -U observatorio -d tcc2026 --no-owner --no-privileges `
+  /backup/OBI_banco_integracao_2026-10-22.backup
+```
+
+Se o banco `tcc2026` já existir, pule o primeiro comando. Depois, importe os
+registros para as tabelas usadas pelo frontend:
+
+```bash
+docker compose exec web python manage.py import_legacy_data --replace
+```
+
+O comando converte fontes, indicadores, localidades, períodos e as 1.533
+observações para os modelos da aplicação. A opção `--replace` remove dados
+anteriores do observatório, incluindo dados demo.
+
+## Migrations locais
+
+Com um PostgreSQL local em execução e o `.env` configurado:
 
 ```bash
 python manage.py migrate
@@ -105,6 +150,17 @@ Esse comando cria dados simulados apenas para desenvolvimento e testes. A aplica
 ```bash
 python manage.py test
 ```
+
+## Uso do dashboard
+
+O dashboard permite filtrar os dados por indicador, categoria, período, região,
+estado e fonte. O filtro inicial é **Todos**, para que região, estado ou fonte
+possam ser selecionados individualmente sem receber um indicador implícito.
+
+Para evitar a mistura de unidades de medida e excesso de legendas, o gráfico de
+evolução é exibido depois que um indicador é selecionado. Com **Todos**, os
+registros continuam disponíveis na tabela e o painel orienta a escolha de um
+indicador para montar o gráfico.
 
 ## Estrutura das principais tabelas
 

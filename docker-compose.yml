@@ -9,19 +9,26 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U observatorio -d observatorio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     environment:
       DATABASE_URL: postgresql://observatorio:observatorio@db:5432/observatorio
+      LEGACY_DATABASE_URL: postgresql://observatorio:observatorio@db:5432/tcc2026
       DEBUG: "True"
       SECRET_KEY: altere-esta-chave
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - .:/app
 
